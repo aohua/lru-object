@@ -41,6 +41,7 @@ export class LRU<K, V> {
     if (this.nodes[key]) {
       const node = this.nodes[key];
       node.value = value;
+      this.moveToHead(node);
       return;
     }
     if (this.size === this.capacity) {
@@ -77,6 +78,7 @@ export class LRU<K, V> {
     this.head.next = node;
     node.prev = this.head;
     node.next = headNext;
+    headNext.prev = node;
   }
 
   private removeFromTail(): void {
