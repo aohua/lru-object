@@ -9,6 +9,7 @@ node_js:
   - '14'
 script:
   - yarn install
+  - yarn lint
   - yarn test
 branches:
   except:
