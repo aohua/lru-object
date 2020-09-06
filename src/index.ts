@@ -9,9 +9,11 @@ export default function createLRUCache<K, V>(
     get(_: any, prop: string | number): V | undefined {
       return lru.get(prop);
     },
-    set(_: any, prop: string | number, value: V): boolean {
-      lru.set(prop, value);
-      return true;
+    set(_: any, prop: string | number, value: V): true {
+      return lru.set(prop, value);
+    },
+    deleteProperty(_: any, prop: string | number): true {
+      return lru.delete(prop);
     },
   };
   return new Proxy(cache, handler);

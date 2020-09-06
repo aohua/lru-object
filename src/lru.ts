@@ -23,12 +23,12 @@ export default class LRU<K, V> {
     return undefined;
   }
 
-  set(key: string | number, value: V): void {
+  set(key: string | number, value: V): true {
     if (this.nodes[key]) {
       const node = this.nodes[key];
       node.value = value;
       this.moveToHead(node);
-      return;
+      return true;
     }
     if (this.size === this.capacity) {
       this.removeFromTail();
@@ -41,6 +41,7 @@ export default class LRU<K, V> {
     newNode.next = next;
     this.nodes[key] = newNode;
     this.size++;
+    return true;
   }
 
   get(key: string | number): V | undefined {
@@ -50,6 +51,22 @@ export default class LRU<K, V> {
     const result = this.nodes[key];
     this.moveToHead(result);
     return result.value;
+  }
+
+  delete(key: string | number): true {
+    if (!this.nodes[key]) {
+      return true;
+    }
+    const node = this.nodes[key];
+    const prev = node.prev;
+    const next = node.next;
+    prev.next = next;
+    next.prev = prev;
+    node.prev = null;
+    node.next = null;
+    delete this.nodes[key];
+    this.size--;
+    return true;
   }
 
   private moveToHead(node: Node<K, V>): void {
@@ -69,12 +86,6 @@ export default class LRU<K, V> {
 
   private removeFromTail(): void {
     const toBeRemoved = this.tail.prev;
-    const prev = toBeRemoved.prev;
-    prev.next = this.tail;
-    this.tail.prev = prev;
-    toBeRemoved.prev = null;
-    toBeRemoved.next = null;
-    delete this.nodes[toBeRemoved.key];
-    this.size--;
+    this.delete(toBeRemoved.key);
   }
 }
