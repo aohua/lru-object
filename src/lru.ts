@@ -1,22 +1,11 @@
-export class Node<K,V> {
-  key: any
-  value: any
-  prev: Node<K, V>
-  next: Node<K, V>
-  constructor(key?: any, value?: any, prev?: Node<K, V>, next?: Node<K, V>) {
-    this.key = key;
-    this.value = value;
-    this.prev = prev;
-    this.next = next;
-  }
-}
+import Node from "./node";
 
-export class LRU<K, V> {
-  head: Node<K, V>
-  tail: Node<K, V>
-  nodes: {[key: string]: V} | {[key: number]: V}
-  size: number
-  capacity: number
+export default class LRU<K, V> {
+  head: Node<K, V>;
+  tail: Node<K, V>;
+  nodes: { [key: string]: V } | { [key: number]: V };
+  size: number;
+  capacity: number;
   constructor(capacity: number) {
     this.head = new Node();
     this.tail = new Node();
@@ -25,9 +14,6 @@ export class LRU<K, V> {
     this.nodes = {};
     this.size = 0;
     this.capacity = capacity;
-    if (capacity <= 0) {
-      console.error("LRU capacity must be gratter than 0");
-    }
   }
 
   peek(key: string | number): V | undefined {
@@ -91,19 +77,4 @@ export class LRU<K, V> {
     delete this.nodes[toBeRemoved.key];
     this.size--;
   }
-}
-
-export default function createLRUCache<K, V>(capacity: number): {[key: string]: V} | {[key: number]: V} {
-  const lru = new LRU<K, V>(capacity);
-  const cache = lru.nodes;
-  const handler = {
-    get: function (_, prop): V | undefined {
-      return lru.get(prop);
-    },
-    set: function (_, prop, value): boolean {
-      lru.set(prop, value);
-      return true;
-    },
-  };
-  return new Proxy(cache, handler);
 }
