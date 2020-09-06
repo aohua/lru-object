@@ -8,7 +8,7 @@ test("prev and next is not set", () => {
 
 describe("LRU", () => {
   test("first element should be removed", () => {
-    const lru = new LRU(3);
+    const lru = new LRU<number, number>(3);
     lru.set(1, 1);
     lru.set(2, 2);
     lru.set(3, 3);
@@ -23,13 +23,12 @@ describe("LRU", () => {
 
 describe("LRU cache", () => {
   test("first element should be removed", () => {
-    const lru = createLRUCache(3);
+    const lru = createLRUCache<number, number>(3);
     lru[1] = 1;
     lru[2] = 2;
     lru[3] = 3;
     expect(lru[1]).toBe(1);
     lru[4] = 4;
-    console.log({ ...lru });
     expect(lru[2]).toBe(undefined);
   });
 });

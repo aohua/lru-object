@@ -1,5 +1,9 @@
-export class Node {
-  constructor<K, V>(key?: K, value?: V, prev?: Node, next?: Node) {
+export class Node<K,V> {
+  key: any
+  value: any
+  prev: Node<K, V>
+  next: Node<K, V>
+  constructor(key?: any, value?: any, prev?: Node<K, V>, next?: Node<K, V>) {
     this.key = key;
     this.value = value;
     this.prev = prev;
@@ -7,7 +11,12 @@ export class Node {
   }
 }
 
-export class LRU {
+export class LRU<K, V> {
+  head: Node<K, V>
+  tail: Node<K, V>
+  nodes: {[key: string]: V} | {[key: number]: V}
+  size: number
+  capacity: number
   constructor(capacity: number) {
     this.head = new Node();
     this.tail = new Node();
@@ -21,14 +30,14 @@ export class LRU {
     }
   }
 
-  peek(key) {
+  peek(key: string | number): V | undefined {
     if (this.nodes[key]) {
       return this.nodes[key].value;
     }
     return undefined;
   }
 
-  set(key, value) {
+  set(key: string | number, value: V): void {
     if (this.nodes[key]) {
       const node = this.nodes[key];
       node.value = value;
@@ -47,7 +56,7 @@ export class LRU {
     this.size++;
   }
 
-  get(key) {
+  get(key: string | number): V | undefined {
     if (!this.nodes[key]) {
       return undefined;
     }
@@ -56,7 +65,7 @@ export class LRU {
     return result.value;
   }
 
-  moveToHead(node) {
+  private moveToHead(node: Node<K, V>): void {
     if (node.prev.prev === null) {
       return;
     }
@@ -70,7 +79,7 @@ export class LRU {
     node.next = headNext;
   }
 
-  removeFromTail() {
+  private removeFromTail(): void {
     const toBeRemoved = this.tail.prev;
     const prev = toBeRemoved.prev;
     prev.next = this.tail;
@@ -82,14 +91,14 @@ export class LRU {
   }
 }
 
-export default function createLRUCache(capacity) {
-  const lru = new LRU(capacity);
+export default function createLRUCache<K, V>(capacity: number): {[key: string]: V} | {[key: number]: V} {
+  const lru = new LRU<K, V>(capacity);
   const cache = lru.nodes;
   const handler = {
-    get: function (target, prop) {
+    get: function (_, prop): V | undefined {
       return lru.get(prop);
     },
-    set: function (target, prop, value) {
+    set: function (_, prop, value): boolean {
       lru.set(prop, value);
       return true;
     },
