@@ -4,6 +4,20 @@ Javascript object with basic LRU functionalities, the idea of this small library
 
 [<img src="https://img.shields.io/travis/AOHUA/lru-object.svg">](https://travis-ci.org/AOHUA/lru-object)
 
+### How to install
+
+Install with npm.
+
+```
+npm i --save lru-object
+```
+
+Install with yarn
+
+```
+yarn add lru-object
+```
+
 ### How to use
 
 Create the state sync middleware with config:
@@ -22,5 +36,8 @@ console.log({...lru});
 // lru[1] is removed, current object { '2': 2, '3': 3, '4': 4 };
 lru[2] = lru[4];
 lru[5] = 5;
+console.log({...lru});
 // lru[3] is removed, current object { '2': 4, '4': 4, '5': 5 };
 ```
+
+Please aware that the newly created Object `{...lru}` is nolonger a LRU cache but a plain javascript object.
