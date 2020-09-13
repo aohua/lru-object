@@ -47,4 +47,36 @@ describe("LRU cache", () => {
     lru[4] = 4;
     expect(Object.keys(lru)).toStrictEqual(["4", "1", "3"]);
   });
+  test("for...of loop should work like normal", () => {
+    const lru = createLRUCache<number, number>(3);
+    lru[1] = 1;
+    lru[2] = 2;
+    lru[3] = 3;
+    expect(lru[1]).toBe(1);
+    lru[4] = 4;
+    expect(Object.keys(lru)).toStrictEqual(["4", "1", "3"]);
+    const keys = [];
+    const values = [];
+    for (const [k, v] of Object.entries(lru)) {
+      keys.push(k);
+      values.push(v);
+    }
+    expect(keys).toStrictEqual(["4", "1", "3"]);
+    expect(values).toStrictEqual([4, 1, 3]);
+  });
+  test("for...in loop should work like normal", () => {
+    const lru = createLRUCache<number, number>(3);
+    lru[1] = 1;
+    lru[2] = 2;
+    lru[3] = 3;
+    expect(lru[1]).toBe(1);
+    lru[4] = 4;
+    const keys = [];
+    for (const key in lru) {
+      if (lru.hasOwnProperty(key)) {
+        keys.push(key);
+      }
+    }
+    expect(keys).toStrictEqual(["4", "1", "3"]);
+  });
 });

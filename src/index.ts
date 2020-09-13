@@ -1,8 +1,6 @@
 import LRU from "./lru";
 
-export default function createLRUCache<K, V>(
-  capacity: number
-): { [key: string]: V } | { [key: number]: V } {
+export default function createLRUCache<K, V>(capacity: number): any {
   const lru = new LRU<K, V>(capacity);
   const cache = lru.nodes;
   const handler = {
@@ -17,6 +15,9 @@ export default function createLRUCache<K, V>(
     },
     ownKeys() {
       return lru.keys();
+    },
+    getOwnPropertyDescriptor(_: any, prop: string | number) {
+      return { enumerable: true, configurable: true };
     },
   };
   return new Proxy(cache, handler);

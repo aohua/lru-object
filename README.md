@@ -18,9 +18,9 @@ Install with yarn
 yarn add lru-object
 ```
 
-### How to use
+### Features
 
-Create the state sync middleware with config:
+1. LRU cache features will be applied invisibly:
 
 ```javascript
 import createLRUCache from 'lru-object';
@@ -34,10 +34,69 @@ lru[3] = 3;
 lru[4] = 4;
 console.log({...lru});
 // lru[1] is removed, current object { '2': 2, '3': 3, '4': 4 };
-lru[2] = lru[4];
-lru[5] = 5;
-console.log({...lru});
-// lru[3] is removed, current object { '2': 4, '4': 4, '5': 5 };
 ```
 
 Please aware that the newly created Object `{...lru}` is nolonger a LRU cache but a plain javascript object.
+
+2. Keys will follow the least recently used sequence
+
+```javascript
+import createLRUCache from 'lru-object';
+
+const lru = createLRUCache<number, number>(3);
+
+lru[1] = 1;
+lru[2] = 2;
+lru[3] = 3;
+// reached capacity
+lru[4] = 4;
+console.log(Object.keys(lru));
+// keys will follow the priority: ['4', '3', '2'];
+```
+
+3. Use it as normal object
+
+```javascript
+import createLRUCache from 'lru-object';
+
+const lru = createLRUCache<number, number>(3);
+
+lru['one'] = 1;
+lru['two'] = 2;
+lru['three'] = 3;
+// reached capacity
+delete lru['three']
+
+for(const [k, v] of Object.entries(lru)) {
+    console.log(k, v);
+}
+
+for (const key in lru) {
+    if (lru.hasOwnProperty(key)) {
+    console.log(key);
+    }
+}
+```
+
+### Things that are not working as expected
+
+1. Spread operator is not following the least recently used sequence
+
+```javascript
+import createLRUCache from 'lru-object';
+
+const lru = createLRUCache<number, number>(3);
+
+lru[1] = 1;
+lru[2] = 2;
+lru[3] = 3;
+console.log({...lru});
+// result: { '1': 1, '2': 2, '3': 3 };
+// expected: { '3': 3, '2': 2, '1': 1 };
+```
+
+### TODO
+
+1. Some options for the LRU cache
+2. Fix typescript issues
+3. ...

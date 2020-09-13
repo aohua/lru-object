@@ -1,8 +1,22 @@
 import Node from "./node";
 import DoublyLinkedList from "./doublyLinkedList";
 
+interface Iterator<K, V> {
+  next(value?: any): IteratorResult<K, V>;
+  return?(value?: any): IteratorResult<K, V>;
+  throw?(e?: any): IteratorResult<K, V>;
+}
+
+interface IteratorResult<K, V> {
+  done: boolean;
+  value: [K, V];
+}
+
 export default class LRU<K, V> {
-  nodes: { [key: string]: V } | { [key: number]: V };
+  nodes:
+    | { [key: string]: V }
+    | { [key: number]: V }
+    | { [Symbol.iterator]: () => Iterator<K, V> };
   list: DoublyLinkedList<K, V>;
   capacity: number;
   constructor(capacity: number) {
@@ -39,8 +53,26 @@ export default class LRU<K, V> {
       return undefined;
     }
     const result = this.nodes[key];
-    this.moveToHead(result);
-    return result.value;
+    if (this.nodes.hasOwnProperty(key)) {
+      this.moveToHead(result);
+      return result.value;
+    } else {
+      return result;
+    }
+  }
+
+  has(key): boolean {
+    if (!this.nodes[key] || this.list.size === 0) {
+      return false;
+    }
+    let node = this.list.head.next;
+    while (node) {
+      if (node.key === key && node.next) {
+        return true;
+      }
+      node = node.next;
+    }
+    return false;
   }
 
   keys(): string[] | number[] {

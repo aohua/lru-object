@@ -1,6 +1,6 @@
 {
   "name": "lru-object",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Javascript object with basic LRU functionalities",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
