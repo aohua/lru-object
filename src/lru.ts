@@ -1,18 +1,13 @@
 import Node from "./node";
+import DoublyLinkedList from "./doublyLinkedList";
 
 export default class LRU<K, V> {
-  head: Node<K, V>;
-  tail: Node<K, V>;
   nodes: { [key: string]: V } | { [key: number]: V };
-  size: number;
+  list: DoublyLinkedList<K, V>;
   capacity: number;
   constructor(capacity: number) {
-    this.head = new Node();
-    this.tail = new Node();
-    this.head.next = this.tail;
-    this.tail.prev = this.head;
+    this.list = new DoublyLinkedList();
     this.nodes = {};
-    this.size = 0;
     this.capacity = capacity;
   }
 
@@ -30,17 +25,12 @@ export default class LRU<K, V> {
       this.moveToHead(node);
       return true;
     }
-    if (this.size === this.capacity) {
+    if (this.list.size === this.capacity) {
       this.removeFromTail();
     }
     const newNode = new Node(key, value);
-    const next = this.head.next;
-    this.head.next = newNode;
-    next.prev = newNode;
-    newNode.prev = this.head;
-    newNode.next = next;
+    this.list.add(newNode);
     this.nodes[key] = newNode;
-    this.size++;
     return true;
   }
 
@@ -55,7 +45,7 @@ export default class LRU<K, V> {
 
   keys(): string[] | number[] {
     const keys = [];
-    let node = this.head.next;
+    let node = this.list.head.next;
     while (node) {
       if (node.next) {
         keys.push(node.key);
@@ -70,12 +60,8 @@ export default class LRU<K, V> {
       return true;
     }
     const node = this.nodes[key];
-    const prev = node.prev;
-    const next = node.next;
-    prev.next = next;
-    next.prev = prev;
+    this.list.remove(node);
     delete this.nodes[key];
-    this.size--;
     return true;
   }
 
@@ -83,19 +69,12 @@ export default class LRU<K, V> {
     if (node.prev.prev === null) {
       return;
     }
-    const prev = node.prev;
-    const next = node.next;
-    prev.next = next;
-    next.prev = prev;
-    const headNext = this.head.next;
-    this.head.next = node;
-    node.prev = this.head;
-    node.next = headNext;
-    headNext.prev = node;
+    this.list.remove(node);
+    this.list.add(node);
   }
 
   private removeFromTail(): void {
-    const toBeRemoved = this.tail.prev;
+    const toBeRemoved = this.list.tail.prev;
     if (toBeRemoved.prev) {
       this.delete(toBeRemoved.key);
     }
