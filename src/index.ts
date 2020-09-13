@@ -15,7 +15,7 @@ export default function createLRUCache<K, V>(
     deleteProperty(_: any, prop: string | number): true {
       return lru.delete(prop);
     },
-    ownKeys(target) {
+    ownKeys() {
       return lru.keys();
     },
   };

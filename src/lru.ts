@@ -74,8 +74,6 @@ export default class LRU<K, V> {
     const next = node.next;
     prev.next = next;
     next.prev = prev;
-    node.prev = null;
-    node.next = null;
     delete this.nodes[key];
     this.size--;
     return true;
@@ -98,6 +96,8 @@ export default class LRU<K, V> {
 
   private removeFromTail(): void {
     const toBeRemoved = this.tail.prev;
-    this.delete(toBeRemoved.key);
+    if (toBeRemoved.prev) {
+      this.delete(toBeRemoved.key);
+    }
   }
 }
