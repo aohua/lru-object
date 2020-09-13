@@ -15,6 +15,9 @@ export default function createLRUCache<K, V>(
     deleteProperty(_: any, prop: string | number): true {
       return lru.delete(prop);
     },
+    ownKeys(target) {
+      return lru.keys();
+    },
   };
   return new Proxy(cache, handler);
 }

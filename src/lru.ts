@@ -53,6 +53,18 @@ export default class LRU<K, V> {
     return result.value;
   }
 
+  keys(): string[] | number[] {
+    const keys = [];
+    let node = this.head.next;
+    while (node) {
+      if (node.next) {
+        keys.push(node.key);
+      }
+      node = node.next;
+    }
+    return keys;
+  }
+
   delete(key: string | number): true {
     if (!this.nodes[key]) {
       return true;

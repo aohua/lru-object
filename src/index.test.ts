@@ -34,4 +34,17 @@ describe("LRU cache", () => {
     expect(lru[1]).toBe(1);
     expect(lru[2]).toBe(2);
   });
+  test("keys should be empty array", () => {
+    const lru = createLRUCache<number, number>(3);
+    expect(Object.keys(lru)).toStrictEqual([]);
+  });
+  test("keys should follow the sequence", () => {
+    const lru = createLRUCache<number, number>(3);
+    lru[1] = 1;
+    lru[2] = 2;
+    lru[3] = 3;
+    expect(lru[1]).toBe(1);
+    lru[4] = 4;
+    expect(Object.keys(lru)).toStrictEqual(["4", "1", "3"]);
+  });
 });
